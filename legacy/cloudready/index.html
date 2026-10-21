@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CloudReady AZ-900</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="#" data-nav="Overview"><span class="brand-mark">☁</span><span>Cloud<span class="brand-accent">Ready</span><small>AZ-900 PREP</small></span></a>
+  <div class="nav-label">LEARNING SPACE</div>
+  <nav class="side-nav" aria-label="Main navigation">
+    <button class="nav-item active" data-nav="Overview"><span class="nav-icon">⌂</span>Overview</button>
+    <button class="nav-item" data-nav="Practice"><span class="nav-icon">▤</span>Practice</button>
+    <button class="nav-item" data-nav="Revision"><span class="nav-icon">↻</span>Revision <span class="nav-badge" id="navDue">0</span></button>
+    <button class="nav-item" data-nav="Progress"><span class="nav-icon">▥</span>Progress</button>
+    <button class="nav-item" data-nav="Resources"><span class="nav-icon">▧</span>Resources</button>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="streak-mini"><div class="streak-flame">✦</div><div><strong>Build your streak</strong><p>Small sessions add up.</p></div></div>
+    <div class="profile"><div class="avatar">CR</div><div class="profile-text"><strong>AZ-900 Learner</strong><small>Keep progressing</small></div><span class="profile-menu">···</span></div>
+  </div>
+</aside>
+<main class="main-content">
+<header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Toggle navigation">☰</button><div class="breadcrumb"><span>Workspace</span><span class="crumb-slash">/</span><strong id="pageTitle">Overview</strong></div><div class="top-actions"><span class="status-pill"><i></i> Study mode</span><button class="icon-button" id="resetButton" title="Reset demo progress">↺</button></div></header>
+<div id="pageContent"></div>
+<footer class="page-footer">CloudReady AZ-900 · Independent study companion · Not affiliated with Microsoft</footer>
+</main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="script.js"></script>
+</body></html>

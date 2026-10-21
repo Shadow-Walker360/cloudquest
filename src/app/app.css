@@ -1,0 +1,45 @@
+.shell {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: var(--space-2) 0 0;
+  font-size: 2.5rem;
+}
+
+.tagline {
+  margin: var(--space-2) 0 var(--space-6);
+  color: var(--color-text-muted);
+  font-size: 1.15rem;
+}
+
+.panel {
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.note,
+footer {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+footer {
+  margin-top: var(--space-6);
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CloudQuest">
+  <rect width="64" height="64" rx="14" fill="#071426"/>
+  <path d="M22 44a9 9 0 0 1-1-17.9A12 12 0 0 1 44 24a10 10 0 0 1 0 20z" fill="#3288FF"/>
+  <circle cx="44" cy="24" r="4" fill="#42D6E8"/>
+</svg>

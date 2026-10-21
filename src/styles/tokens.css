@@ -1,0 +1,19 @@
+/* Design tokens. Values follow docs/spec/03-design-system-and-ux.md;
+   contrast is verified in Phase 6, not assumed. */
+:root {
+  color-scheme: dark;
+
+  --color-bg: #071426;
+  --color-surface: #0e2038;
+  --color-surface-raised: #142b47;
+  --color-text: #f4f7fb;
+  --color-text-muted: #aab9cc;
+  --color-primary: #3288ff;
+  --color-accent: #42d6e8;
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --space-2: 0.5rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --radius: 0.75rem;
+}

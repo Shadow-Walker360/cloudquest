@@ -4,31 +4,50 @@
  */
 
 export type Route =
-  { name: 'landing' } | { name: 'overview' } | { name: 'tracks' } | { name: 'not-found' }
+  | { name: 'landing' }
+  | { name: 'overview' }
+  | { name: 'tracks' }
+  | { name: 'lab' }
+  | { name: 'scenario'; scenarioId: string }
+  | { name: 'not-found' }
 
-const PATHS = {
-  landing: '/',
-  overview: '/app',
-  tracks: '/app/tracks',
-} as const
+const SCENARIO_PATH = /^\/app\/lab\/([a-z0-9-]+)$/
 
 export function parseHash(hash: string): Route {
   const withoutHash = hash.startsWith('#') ? hash.slice(1) : hash
   const path = (withoutHash.split('?')[0] ?? '').replace(/\/+$/, '') || '/'
   switch (path) {
-    case PATHS.landing:
+    case '/':
       return { name: 'landing' }
-    case PATHS.overview:
+    case '/app':
       return { name: 'overview' }
-    case PATHS.tracks:
+    case '/app/tracks':
       return { name: 'tracks' }
-    default:
-      return { name: 'not-found' }
+    case '/app/lab':
+      return { name: 'lab' }
   }
+  const scenarioId = SCENARIO_PATH.exec(path)?.[1]
+  return scenarioId ? { name: 'scenario', scenarioId } : { name: 'not-found' }
 }
 
 export function hrefFor(route: Exclude<Route, { name: 'not-found' }>): string {
-  return `#${PATHS[route.name]}`
+  switch (route.name) {
+    case 'landing':
+      return '#/'
+    case 'overview':
+      return '#/app'
+    case 'tracks':
+      return '#/app/tracks'
+    case 'lab':
+      return '#/app/lab'
+    case 'scenario':
+      return `#/app/lab/${route.scenarioId}`
+  }
+}
+
+/** Identifies a page, so moving between two scenarios counts as navigation. */
+export function routeKey(route: Route): string {
+  return route.name === 'scenario' ? `scenario:${route.scenarioId}` : route.name
 }
 
 export function routeTitle(route: Route): string {
@@ -39,6 +58,9 @@ export function routeTitle(route: Route): string {
       return 'Overview · CloudQuest'
     case 'tracks':
       return 'Learning tracks · CloudQuest'
+    case 'lab':
+    case 'scenario':
+      return 'Scenario Lab · CloudQuest'
     case 'not-found':
       return 'Page not found · CloudQuest'
   }

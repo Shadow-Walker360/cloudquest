@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { Disclaimer } from '../components/Disclaimer.tsx'
 import { StatusChip } from '../components/StatusChip.tsx'
 import { Main } from './Main.tsx'
-import { features } from './navigation.ts'
+import { features, isCurrent } from './navigation.ts'
 import { hrefFor, type Route } from './routes.ts'
 
 export function WorkspaceShell({ route, children }: { route: Route; children: ReactNode }) {
@@ -23,7 +23,7 @@ export function WorkspaceShell({ route, children }: { route: Route; children: Re
                 <a
                   className="nav-link"
                   href={hrefFor({ name: feature.route })}
-                  aria-current={route.name === feature.route ? 'page' : undefined}
+                  aria-current={isCurrent(feature.route, route) ? 'page' : undefined}
                 >
                   {feature.label}
                 </a>

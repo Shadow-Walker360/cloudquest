@@ -34,10 +34,11 @@ describe('landing page', () => {
     expect(links[0]?.getAttribute('href')).toBe('#/app')
   })
 
-  it('marks every learning activity as planned rather than implying it works', () => {
+  it('shows each learning activity at its real status rather than implying it all works', () => {
     renderAt('')
     const section = screen.getByRole('region', { name: 'What CloudQuest is building' })
-    expect(within(section).getAllByText(/Planned/)).toHaveLength(3)
+    expect(within(section).getAllByText(/In development/)).toHaveLength(1)
+    expect(within(section).getAllByText(/Planned/)).toHaveLength(2)
   })
 
   it('lets a guest enter the workspace, updating the title and moving focus', async () => {
@@ -62,25 +63,36 @@ describe('workspace', () => {
     ).toBeNull()
   })
 
-  it('does not link to features that do not exist yet', () => {
+  it('links to the Scenario Lab but not to features that do not exist yet', () => {
     renderAt('#/app')
     const nav = screen.getByRole('navigation', { name: 'Workspace' })
-    for (const label of ['Scenario Lab', 'Architecture Canvas', 'Revision Studio', 'Progress']) {
+    expect(within(nav).getByRole('link', { name: 'Scenario Lab' }).getAttribute('href')).toBe(
+      '#/app/lab',
+    )
+    for (const label of ['Architecture Canvas', 'Revision Studio', 'Progress']) {
       expect(within(nav).queryByRole('link', { name: new RegExp(label) })).toBeNull()
       expect(within(nav).getByText(new RegExp(label))).toBeTruthy()
     }
-    expect(within(nav).getAllByText(/Planned/)).toHaveLength(4)
+    expect(within(nav).getAllByText(/Planned/)).toHaveLength(3)
   })
 
   it('shows an honest empty state and labels draft content as unreviewed', () => {
     renderAt('#/app')
     expect(screen.getByText('No activity yet')).toBeTruthy()
-    expect(screen.getByText(/\(not yet reviewed\)/)).toBeTruthy()
+    expect(screen.getAllByText(/\(not yet reviewed\)/).length).toBeGreaterThan(0)
   })
 
-  it('navigates to the tracks page from the overview call to action', async () => {
+  it('opens the Scenario Lab from the overview call to action', async () => {
     renderAt('#/app')
-    await userEvent.click(screen.getByRole('link', { name: 'View learning tracks' }))
+    await userEvent.click(screen.getByRole('link', { name: 'Open the Scenario Lab' }))
+    expect(await screen.findByRole('heading', { level: 1, name: 'Scenario Lab' })).toBeTruthy()
+    expect(document.title).toBe('Scenario Lab · CloudQuest')
+  })
+
+  it('navigates to the tracks page from the navigation', async () => {
+    renderAt('#/app')
+    const nav = screen.getByRole('navigation', { name: 'Workspace' })
+    await userEvent.click(within(nav).getByRole('link', { name: 'Learning tracks' }))
     expect(await screen.findByRole('heading', { level: 1, name: 'Learning tracks' })).toBeTruthy()
     expect(document.title).toBe('Learning tracks · CloudQuest')
   })

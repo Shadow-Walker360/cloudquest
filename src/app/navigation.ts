@@ -1,4 +1,5 @@
 import type { ChipStatus } from '../components/StatusChip.tsx'
+import type { Route } from './routes.ts'
 
 export interface FeatureItem {
   id: string
@@ -6,7 +7,12 @@ export interface FeatureItem {
   description: string
   status: ChipStatus
   /** Present only for features that have a page today. */
-  route?: 'overview' | 'tracks'
+  route?: 'overview' | 'tracks' | 'lab'
+}
+
+/** A feature's nav entry is current on its own page and on pages that live under it. */
+export function isCurrent(featureRoute: NonNullable<FeatureItem['route']>, route: Route): boolean {
+  return route.name === featureRoute || (featureRoute === 'lab' && route.name === 'scenario')
 }
 
 /**
@@ -31,8 +37,10 @@ export const features: readonly FeatureItem[] = [
   {
     id: 'scenario-lab',
     label: 'Scenario Lab',
-    description: 'Original cloud situations with hints, reasoning feedback and a fresh retry.',
-    status: 'planned',
+    description:
+      'Original cloud situations with hints, reasoning feedback and a fresh retry. One draft scenario so far.',
+    status: 'in-development',
+    route: 'lab',
   },
   {
     id: 'architecture-canvas',

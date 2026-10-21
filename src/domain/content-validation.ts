@@ -11,6 +11,9 @@ export type IssueCode =
   | 'invalid-evaluator'
   | 'invalid-hints'
   | 'invalid-rationale'
+  | 'invalid-misconception'
+  | 'invalid-transfer'
+  | 'invalid-id'
   | 'review-status'
 
 export interface ValidationIssue {
@@ -58,6 +61,9 @@ function validateScenario(
 
   for (const field of ['id', 'version', 'title', 'summary', 'task', 'explanation'] as const) {
     if (isBlank(scenario[field])) add(field, 'empty-field', `${field} must not be empty.`)
+  }
+  if (!/^[a-z0-9-]+$/.test(scenario.id)) {
+    add('id', 'invalid-id', 'Scenario ids may only use lowercase letters, digits and hyphens.')
   }
   if (scenario.packId !== pack.id) {
     add(
@@ -127,6 +133,45 @@ function validateScenario(
     }
   }
 
+  const knownTags = new Set(scenario.misconceptionTags)
+  scenario.options.forEach((option, i) => {
+    if (option.feedbackTag !== undefined && !knownTags.has(option.feedbackTag)) {
+      add(
+        `options[${i}].feedbackTag`,
+        'invalid-misconception',
+        `Tag "${option.feedbackTag}" is not listed in misconceptionTags.`,
+      )
+    }
+  })
+
+  if (scenario.format === 'scenario') {
+    // A scenario must explain every option and name the misconception behind each wrong one.
+    scenario.options.forEach((option, i) => {
+      if (!scenario.optionRationales?.[option.id]?.trim()) {
+        add(
+          `optionRationales.${option.id}`,
+          'invalid-rationale',
+          `Option "${option.id}" needs a rationale.`,
+        )
+      }
+      const isCorrect = option.id === scenario.evaluator.correctOptionId
+      if (!isCorrect && !option.feedbackTag) {
+        add(
+          `options[${i}].feedbackTag`,
+          'invalid-misconception',
+          `Wrong option "${option.id}" needs a misconception tag.`,
+        )
+      }
+      if (isCorrect && option.feedbackTag) {
+        add(
+          `options[${i}].feedbackTag`,
+          'invalid-misconception',
+          'The correct option must not carry a misconception tag.',
+        )
+      }
+    })
+  }
+
   scenario.hints.forEach((hint, i) => {
     if (hint.order !== i + 1) {
       add(
@@ -192,6 +237,38 @@ export function validatePack(pack: ContentPack): ValidationIssue[] {
   const objectiveIdSet = new Set(objectiveIds)
   pack.scenarios.forEach((scenario, i) => {
     issues.push(...validateScenario(scenario, `scenarios[${i}]`, pack, objectiveIdSet))
+  })
+
+  pack.scenarios.forEach((scenario, i) => {
+    if (scenario.transferScenarioId === undefined) return
+    const path = `scenarios[${i}].transferScenarioId`
+    const target = pack.scenarios.find((candidate) => candidate.id === scenario.transferScenarioId)
+    if (!target || target.id === scenario.id) {
+      add(
+        path,
+        'invalid-transfer',
+        'Transfer scenario must be a different scenario in the same pack.',
+      )
+      return
+    }
+    if (!target.objectiveIds.some((id) => scenario.objectiveIds.includes(id))) {
+      add(path, 'invalid-transfer', 'Transfer scenario must share at least one objective.')
+    }
+    const labels = (s: Scenario) =>
+      s.options
+        .map((o) => o.label.trim().toLowerCase())
+        .sort()
+        .join('|')
+    if (
+      target.task.trim().toLowerCase() === scenario.task.trim().toLowerCase() ||
+      labels(target) === labels(scenario)
+    ) {
+      add(
+        path,
+        'invalid-transfer',
+        'Transfer scenario must change the context, not reshuffle the same item.',
+      )
+    }
   })
 
   if (pack.status === 'reviewed') {

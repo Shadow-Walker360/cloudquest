@@ -14,13 +14,13 @@ export function OverviewPage() {
         do is saved yet.
       </p>
       <div className="page-actions">
-        <ButtonLink href={hrefFor({ name: 'tracks' })}>View learning tracks</ButtonLink>
+        <ButtonLink href={hrefFor({ name: 'lab' })}>Open the Scenario Lab</ButtonLink>
       </div>
 
       <section className="panel" aria-labelledby="activity-title">
         <h2 id="activity-title">Your activity</h2>
         <EmptyState title="No activity yet">
-          Challenges and progress will appear here once the Scenario Lab is available.
+          Nothing is recorded yet. Saving attempts and showing progress are planned features.
         </EmptyState>
       </section>
 

@@ -33,6 +33,7 @@ export type InteractionType = 'single-choice'
 export interface ScenarioOption {
   id: ID
   label: string
+  /** For a wrong option: the misconception it signals. Must appear in `Scenario.misconceptionTags`. */
   feedbackTag?: string
 }
 
@@ -55,6 +56,7 @@ export type EvaluatorSpec = { id: 'single-choice-exact'; correctOptionId: ID }
 export type ScenarioFormat = 'knowledge-check' | 'scenario'
 
 export interface Scenario {
+  /** Lowercase letters, digits and hyphens only: it is used in URLs. */
   id: ID
   packId: ID
   version: string
@@ -72,8 +74,14 @@ export interface Scenario {
   hints: Hint[]
   evaluator: EvaluatorSpec
   explanation: string
+  /** Why each option is right or wrong. Required for the `scenario` format. */
   optionRationales?: Record<ID, string>
   misconceptionTags: string[]
+  /**
+   * A fresh scenario in the same pack that tests an overlapping objective in a changed
+   * context. Offered after feedback; never the same item with shuffled options.
+   */
+  transferScenarioId?: ID
   sourceRefs: SourceReference[]
   status: ContentStatus
   /** ISO date; required when status is `reviewed`. */

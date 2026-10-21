@@ -6,28 +6,28 @@
 > Google. It does not reproduce official certification exam questions. The name "CloudQuest" is
 > provisional: domain, existing-product and trademark availability have not been checked.
 
-## Current status: Phase 1 (app shell)
+## Current status: Phase 2 (Scenario Lab slice)
 
-The landing page, guest entry and workspace shell work. **The learning activities themselves are
-not built yet**: the workspace is honest about this and labels them as planned.
+A guest can open the Scenario Lab, work through an original scenario with progressive hints,
+get reasoning-based feedback, and continue to a fresh variant that tests the idea in a changed
+context. **All scenario content is draft and unreviewed**, and the app says so wherever it is
+shown. Attempts are not saved yet.
 
 | Capability                                                 | Status                                                                                               |
 | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | Vite + React + strict TypeScript, tests, CI workflow       | Implemented (CI workflow not yet run on GitHub)                                                      |
-| Typed content model and pack validator                     | Implemented, unit-tested                                                                             |
-| Legacy AZ-900 question set as a pack                       | Implemented as **draft, unreviewed**                                                                 |
-| Landing page and guest entry (no sign-up)                  | Implemented                                                                                          |
-| Responsive workspace shell and navigation                  | Implemented                                                                                          |
-| Learning tracks overview (availability from content state) | Implemented. Informational only: no track is available yet, so none can be started or switched to    |
-| Design tokens with tested contrast                         | Implemented                                                                                          |
-| Offline notice, error fallback, not-found, empty state     | Implemented                                                                                          |
-| Loading states                                             | Not yet: nothing loads asynchronously. Added with the first feature that needs one                   |
-| Scenario Lab, hints, feedback, transfer retry              | Planned (Phase 2)                                                                                    |
-| Attempts, revision scheduler, progress                     | Planned (Phase 3)                                                                                    |
+| Typed content model, pack validator, authoring rules       | Implemented, unit-tested                                                                             |
+| Landing page, guest entry, responsive workspace shell      | Implemented                                                                                          |
+| Learning tracks overview                                   | Implemented. Informational: no track is available because no content is reviewed                     |
+| Scenario Lab: context, constraints, decision, hints        | Implemented as a **draft preview**: 1 scenario + 1 transfer variant, both unreviewed                 |
+| Typed evaluator, per-option rationales, misconception tags | Implemented, unit-tested (`single-choice-exact` only)                                                |
+| Fresh transfer variant after feedback                      | Implemented; validator enforces a changed context                                                    |
+| Saving attempts, hint usage, scheduling revision, progress | Planned (Phase 3). Nothing is stored; "Guest mode" is only a label                                   |
 | Architecture Canvas and simulation                         | Planned (Phase 4)                                                                                    |
-| Track registry for multiple packs, second pack, demo auth  | Planned (Phase 5)                                                                                    |
+| Second pack, track switching, demo auth                    | Planned (Phase 5)                                                                                    |
 | Real authentication                                        | Not configured. Only clearly labelled demo screens will be built unless a trusted provider is set up |
-| Full accessibility and responsive audit                    | Planned (Phase 6). Phase 1 checks are listed under "Accessibility so far"                            |
+| Loading states                                             | Not yet: nothing loads asynchronously                                                                |
+| Full accessibility and responsive audit                    | Planned (Phase 6). Checks done so far are listed under "Accessibility so far"                        |
 
 ## Setup
 
@@ -46,7 +46,7 @@ npm run format       # prettier --write
 npm run format:check # prettier --check
 ```
 
-Format check, lint, typecheck, tests and build all passed at the end of Phase 1. The pages were
+Format check, lint, typecheck, tests and build all passed at the end of Phase 2. The pages were
 also loaded in headless Chromium at desktop and mobile widths, with no console errors and no
 horizontal overflow. That is a smoke check, not a cross-browser or assistive-technology audit.
 
@@ -60,6 +60,7 @@ src/
     packs/             Versioned content packs
     registry.ts        All packs the app knows about
   domain/              Pure types and rules (content model, pack validation)
+  features/scenarios/  Evaluator, attempt state machine, catalog, ScenarioRunner UI
   features/tracks/     Track catalog and availability rules
   styles/              Design tokens, contrast helpers, global and component styles
 .github/workflows/     CI: format, lint, typecheck, test, build
@@ -78,22 +79,38 @@ Skip link, one `main` landmark, labelled navigation with `aria-current`, visible
 reduced-motion support, 44px minimum touch targets, and status shown by icon plus text rather
 than colour alone. Focus moves to the page and the tab title updates on navigation. Colour
 contrast for text, focus ring and interactive borders is asserted in `src/styles/tokens.test.ts`.
-Screen-reader and cross-browser testing have not been done.
+An automated axe-core audit (WCAG 2.2 A/AA and best-practice rules) of the Scenario Lab list,
+a scenario while answering, its feedback, the fresh variant, and the mobile feedback view found
+no violations. Automated tools catch only part of what matters: screen-reader and
+cross-browser testing have not been done.
+
+In the Scenario Lab, feedback is delivered by moving focus to the result heading, hints are
+announced politely as they appear, and the answer options are a native, keyboard-operable
+radio group.
 
 ## Content policy
 
-- Scenarios and questions are original study prompts, never official exam items.
+- Scenarios are original study prompts, never official exam items.
 - Every pack and scenario carries a status (`draft`, `reviewed`, `archived`), sources, and a
   review date when reviewed. `validatePack` rejects a pack that claims to be reviewed without
   review metadata, and tests run it over every registered pack.
-- The only pack today (`azure-fundamentals-legacy`) is **draft**. Its objective set version is
-  `unverified`, objective descriptions are domain labels rather than official wording, and the
-  source links were carried over from the legacy dashboard and have not been re-checked.
+- **Draft content can be previewed, never presented as reviewed.** It is playable in the
+  Scenario Lab under a visible "Draft preview" notice, and it does not make a track
+  "available" (see `docs/adr/0004-draft-preview-policy.md`).
+- Both packs (`azure-fundamentals-legacy`, `azure-fundamentals-scenarios`) are **draft**. Their
+  objective set version is `unverified`, objective descriptions are domain labels rather than
+  official wording, and the source links were carried over from the legacy dashboard and have not
+  been re-checked.
+- The scenarios were written from general knowledge and have **not** been checked against current
+  Microsoft documentation. Review them with `docs/content-authoring.md` before marking anything
+  `reviewed`.
 
 ## Known limitations
 
-- The legacy questions are plain knowledge checks, not the scenario-style challenges the
-  product aims for.
+- The nine legacy questions are plain knowledge checks. They are validated and kept in the repo
+  but deliberately **not shown** in the Scenario Lab, which is for scenario-style challenges.
+- There is one scenario and one variant, so the lab is a vertical slice, not a curriculum.
+- Hint usage and answers are not recorded anywhere yet (Phase 3).
 - The legacy dashboard's sample metrics and seeded revision items were deliberately **not**
   carried over, because they were not derived from real activity.
 - No persistence, auth, or analytics exist yet. Guest mode is simply the default: nothing is
@@ -112,4 +129,6 @@ trusted auth provider with server-side ownership checks; this is not configured.
 
 - `docs/spec/` — the original brief, requirements, flows, design system, architecture, domain
   model and build plan, plus the build prompt. Treat as the target, not the current state.
-- `docs/adr/` — decisions made so far (stack and tooling; evaluators as typed data; hash routing).
+- `docs/adr/` — decisions made so far (stack and tooling; evaluators as typed data; hash routing;
+  draft-preview policy).
+- `docs/content-authoring.md` — how scenarios are structured and how to review one.

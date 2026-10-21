@@ -1,10 +1,5 @@
-import type {
-  ContentPack,
-  Objective,
-  Scenario,
-  ScenarioOption,
-  SourceReference,
-} from '../../domain/content.ts'
+import type { ContentPack, Scenario, ScenarioOption } from '../../domain/content.ts'
+import { azureObjectives } from './azure-objectives.ts'
 
 /**
  * Legacy CloudReady practice questions, ported unchanged into the typed pack
@@ -14,53 +9,6 @@ import type {
  */
 
 const PACK_ID = 'azure-fundamentals-legacy'
-
-const studyGuide: SourceReference = {
-  title: 'Microsoft Learn: AZ-900 study guide',
-  url: 'https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900',
-}
-
-const objectives: Objective[] = [
-  {
-    id: 'az900.cloud-concepts',
-    title: 'Cloud concepts',
-    description:
-      'Legacy CloudReady domain grouping. Official skills-measured wording not yet verified.',
-    sourceRefs: [
-      studyGuide,
-      {
-        title: 'Microsoft Learn: Describe cloud concepts',
-        url: 'https://learn.microsoft.com/en-us/training/paths/az-900-describe-cloud-concepts/',
-      },
-    ],
-  },
-  {
-    id: 'az900.architecture-services',
-    title: 'Azure architecture and services',
-    description:
-      'Legacy CloudReady domain grouping. Official skills-measured wording not yet verified.',
-    sourceRefs: [
-      studyGuide,
-      {
-        title: 'Microsoft Learn: Describe Azure architecture and services',
-        url: 'https://learn.microsoft.com/en-us/training/paths/az-900-describe-azure-architecture-services/',
-      },
-    ],
-  },
-  {
-    id: 'az900.management-governance',
-    title: 'Azure management and governance',
-    description:
-      'Legacy CloudReady domain grouping. Official skills-measured wording not yet verified.',
-    sourceRefs: [
-      studyGuide,
-      {
-        title: 'Microsoft Learn: Describe Azure management and governance',
-        url: 'https://learn.microsoft.com/en-us/training/paths/az-900-describe-azure-management-governance/',
-      },
-    ],
-  },
-]
 
 interface KnowledgeCheckInput {
   id: string
@@ -73,7 +21,7 @@ interface KnowledgeCheckInput {
 }
 
 function knowledgeCheck(input: KnowledgeCheckInput): Scenario {
-  const objective = objectives.find((o) => o.id === input.objectiveId)
+  const objective = azureObjectives.find((o) => o.id === input.objectiveId)
   return {
     id: input.id,
     packId: PACK_ID,
@@ -108,7 +56,7 @@ export const azureFundamentalsLegacyPack: ContentPack = {
   status: 'draft',
   authors: ['CloudReady legacy content'],
   reviewers: [],
-  objectives,
+  objectives: azureObjectives,
   scenarios: [
     knowledgeCheck({
       id: 'legacy-q1',

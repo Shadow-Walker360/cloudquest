@@ -24,7 +24,8 @@ export function TracksPage() {
               {availability.state === 'in-development' && (
                 <p>
                   {availability.draftItems} draft items exist, but they have not been reviewed, so
-                  this track cannot be started yet.
+                  this track is not available yet. Draft scenarios can be tried as unreviewed
+                  previews in the Scenario Lab.
                 </p>
               )}
               {availability.state === 'planned' && <p>No content has been written yet.</p>}

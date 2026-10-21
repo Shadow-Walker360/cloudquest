@@ -2,18 +2,22 @@ import { ButtonLink } from '../../components/ButtonLink.tsx'
 import { Disclaimer } from '../../components/Disclaimer.tsx'
 import { StatusChip } from '../../components/StatusChip.tsx'
 import { Main } from '../Main.tsx'
+import { features } from '../navigation.ts'
 import { hrefFor } from '../routes.ts'
 
 const pillars = [
   {
+    id: 'scenario-lab',
     title: 'Scenario Lab',
     text: 'Investigate a realistic situation, make a decision, and see why it works or fails.',
   },
   {
+    id: 'architecture-canvas',
     title: 'Architecture Canvas',
     text: 'Build a simple conceptual diagram and run a what-if event to see what breaks.',
   },
   {
+    id: 'revision',
     title: 'Revision Studio',
     text: 'Come back to the ideas you missed, on a schedule you can understand.',
   },
@@ -59,7 +63,9 @@ export function LandingPage() {
               <li key={pillar.title} className="card">
                 <h3>{pillar.title}</h3>
                 <p>{pillar.text}</p>
-                <StatusChip status="planned" />
+                <StatusChip
+                  status={features.find((f) => f.id === pillar.id)?.status ?? 'planned'}
+                />
               </li>
             ))}
           </ul>

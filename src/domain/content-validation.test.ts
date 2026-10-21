@@ -21,12 +21,13 @@ function makeScenario(overrides: Partial<Scenario> = {}): Scenario {
     interactionType: 'single-choice',
     options: [
       { id: 'a', label: 'Option A' },
-      { id: 'b', label: 'Option B' },
+      { id: 'b', label: 'Option B', feedbackTag: 'tag-b' },
     ],
     hints: [{ order: 1, text: 'Think about the constraint.' }],
     evaluator: { id: 'single-choice-exact', correctOptionId: 'a' },
     explanation: 'A fits because of the constraint.',
-    misconceptionTags: [],
+    optionRationales: { a: 'A satisfies the constraint.', b: 'B ignores the constraint.' },
+    misconceptionTags: ['tag-b'],
     sourceRefs: [source],
     status: 'draft',
     ...overrides,
@@ -160,6 +161,84 @@ describe('validatePack', () => {
   it('rejects malformed dates', () => {
     const scenario = makeScenario({ reviewedAt: 'last tuesday' })
     expect(codes(makePack({ scenarios: [scenario] }))).toContain('invalid-date')
+  })
+
+  it('requires URL-safe scenario ids', () => {
+    expect(codes(makePack({ scenarios: [makeScenario({ id: 'Bad Id' })] }))).toContain('invalid-id')
+  })
+
+  it('requires a rationale for every option in the scenario format', () => {
+    const scenario = makeScenario({ optionRationales: { a: 'Only A is explained.' } })
+    const issues = validatePack(makePack({ scenarios: [scenario] }))
+    expect(issues.map((i) => i.path)).toContain('scenarios[0].optionRationales.b')
+    const knowledgeCheck = makeScenario({ format: 'knowledge-check', optionRationales: undefined })
+    expect(codes(makePack({ scenarios: [knowledgeCheck] }))).not.toContain('invalid-rationale')
+  })
+
+  it('ties misconception tags to wrong options', () => {
+    const untagged = makeScenario({
+      options: [
+        { id: 'a', label: 'Option A' },
+        { id: 'b', label: 'Option B' },
+      ],
+    })
+    expect(codes(makePack({ scenarios: [untagged] }))).toContain('invalid-misconception')
+
+    const unlisted = makeScenario({ misconceptionTags: [] })
+    expect(codes(makePack({ scenarios: [unlisted] }))).toContain('invalid-misconception')
+
+    const taggedCorrect = makeScenario({
+      options: [
+        { id: 'a', label: 'Option A', feedbackTag: 'tag-b' },
+        { id: 'b', label: 'Option B', feedbackTag: 'tag-b' },
+      ],
+    })
+    expect(codes(makePack({ scenarios: [taggedCorrect] }))).toContain('invalid-misconception')
+  })
+
+  describe('transfer scenarios', () => {
+    const original = makeScenario({ transferScenarioId: 's2' })
+    const variant = makeScenario({
+      id: 's2',
+      task: 'A different task in a different situation.',
+      options: [
+        { id: 'a', label: 'Fresh option A' },
+        { id: 'b', label: 'Fresh option B', feedbackTag: 'tag-b' },
+      ],
+    })
+
+    it('accepts a changed-context variant that shares an objective', () => {
+      expect(validatePack(makePack({ scenarios: [original, variant] }))).toEqual([])
+    })
+
+    it('rejects a missing target, a self reference, and a different objective', () => {
+      expect(codes(makePack({ scenarios: [original] }))).toContain('invalid-transfer')
+      expect(
+        codes(makePack({ scenarios: [makeScenario({ transferScenarioId: 's1' })] })),
+      ).toContain('invalid-transfer')
+      const elsewhere = { ...variant, objectiveIds: ['o2'] }
+      const pack = makePack({
+        objectives: [
+          { id: 'o1', title: 'One', description: 'D', sourceRefs: [source] },
+          { id: 'o2', title: 'Two', description: 'D', sourceRefs: [source] },
+        ],
+        scenarios: [original, elsewhere],
+      })
+      expect(codes(pack)).toContain('invalid-transfer')
+    })
+
+    it('rejects the same options in a new order, even with a different task', () => {
+      const shuffled = { ...variant, options: [...original.options].reverse() }
+      const issues = validatePack(makePack({ scenarios: [original, shuffled] }))
+      expect(issues.map((i) => i.code)).toEqual(['invalid-transfer'])
+      expect(issues[0]?.message).toMatch(/reshuffle/)
+    })
+
+    it('rejects a variant that reuses the task, even with different options', () => {
+      const sameTask = { ...variant, task: original.task }
+      const issues = validatePack(makePack({ scenarios: [original, sameTask] }))
+      expect(issues.map((i) => i.code)).toEqual(['invalid-transfer'])
+    })
   })
 
   it('reports paths so authors can find the problem', () => {

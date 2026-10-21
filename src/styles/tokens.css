@@ -1,19 +1,55 @@
-/* Design tokens. Values follow docs/spec/03-design-system-and-ux.md;
-   contrast is verified in Phase 6, not assumed. */
+/* Design tokens. Palette follows docs/spec/03-design-system-and-ux.md, with one deliberate
+   change: text on primary uses the dark navy (--color-on-primary) because white on the
+   suggested blue is only 3.4:1. Contrast pairs are asserted in src/styles/tokens.test.ts. */
 :root {
   color-scheme: dark;
 
+  /* Surfaces and text */
   --color-bg: #071426;
   --color-surface: #0e2038;
   --color-surface-raised: #142b47;
   --color-text: #f4f7fb;
   --color-text-muted: #aab9cc;
+
+  /* Brand */
   --color-primary: #3288ff;
+  --color-on-primary: #071426;
   --color-accent: #42d6e8;
 
+  /* Lines. --color-border is decorative; --color-border-strong marks interactive edges (3:1+). */
+  --color-border: #274260;
+  --color-border-strong: #7d95b3;
+
+  /* Status colours are always paired with an icon and a text label, never used alone. */
+  --color-success: #4ade9a;
+  --color-warning: #f5b942;
+  --color-danger: #ff8a8a;
+
+  /* Typography */
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem);
+  --leading-tight: 1.2;
+  --leading-body: 1.55;
+
+  /* Spacing and shape */
+  --space-1: 0.25rem;
   --space-2: 0.5rem;
+  --space-3: 0.75rem;
   --space-4: 1rem;
   --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --radius-sm: 0.5rem;
   --radius: 0.75rem;
+  --radius-pill: 999px;
+
+  /* Layout */
+  --content-width: 68rem;
+  --reading-width: 42rem;
+  --sidebar-width: 15rem;
+  --target-size: 2.75rem; /* minimum touch target */
 }

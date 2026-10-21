@@ -6,23 +6,28 @@
 > Google. It does not reproduce official certification exam questions. The name "CloudQuest" is
 > provisional: domain, existing-product and trademark availability have not been checked.
 
-## Current status: Phase 0 (scaffold)
+## Current status: Phase 1 (app shell)
 
-The project has just been scaffolded. **No learner-facing features exist yet.** The running app
-is a placeholder page that lists the loaded content packs.
+The landing page, guest entry and workspace shell work. **The learning activities themselves are
+not built yet**: the workspace is honest about this and labels them as planned.
 
-| Capability                                                    | Status                                                                                               |
-| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Vite + React + strict TypeScript scaffold                     | Implemented                                                                                          |
-| Typed content model (`ContentPack`, `Scenario`) and validator | Implemented, unit-tested                                                                             |
-| Legacy AZ-900 question set ported to a pack                   | Implemented as **draft, unreviewed**                                                                 |
-| Landing page and guest sample                                 | Planned (Phase 1)                                                                                    |
-| Scenario Lab, hints, feedback, transfer retry                 | Planned (Phase 2)                                                                                    |
-| Attempts, revision scheduler, progress                        | Planned (Phase 3)                                                                                    |
-| Architecture Canvas and simulation                            | Planned (Phase 4)                                                                                    |
-| Track registry, second pack, demo auth                        | Planned (Phase 5)                                                                                    |
-| Real authentication                                           | Not configured. Only clearly labelled demo screens will be built unless a trusted provider is set up |
-| Accessibility and responsive audit                            | Planned (Phase 6)                                                                                    |
+| Capability                                                 | Status                                                                                               |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Vite + React + strict TypeScript, tests, CI workflow       | Implemented (CI workflow not yet run on GitHub)                                                      |
+| Typed content model and pack validator                     | Implemented, unit-tested                                                                             |
+| Legacy AZ-900 question set as a pack                       | Implemented as **draft, unreviewed**                                                                 |
+| Landing page and guest entry (no sign-up)                  | Implemented                                                                                          |
+| Responsive workspace shell and navigation                  | Implemented                                                                                          |
+| Learning tracks overview (availability from content state) | Implemented. Informational only: no track is available yet, so none can be started or switched to    |
+| Design tokens with tested contrast                         | Implemented                                                                                          |
+| Offline notice, error fallback, not-found, empty state     | Implemented                                                                                          |
+| Loading states                                             | Not yet: nothing loads asynchronously. Added with the first feature that needs one                   |
+| Scenario Lab, hints, feedback, transfer retry              | Planned (Phase 2)                                                                                    |
+| Attempts, revision scheduler, progress                     | Planned (Phase 3)                                                                                    |
+| Architecture Canvas and simulation                         | Planned (Phase 4)                                                                                    |
+| Track registry for multiple packs, second pack, demo auth  | Planned (Phase 5)                                                                                    |
+| Real authentication                                        | Not configured. Only clearly labelled demo screens will be built unless a trusted provider is set up |
+| Full accessibility and responsive audit                    | Planned (Phase 6). Phase 1 checks are listed under "Accessibility so far"                            |
 
 ## Setup
 
@@ -41,27 +46,39 @@ npm run format       # prettier --write
 npm run format:check # prettier --check
 ```
 
-Lint, format check, typecheck, tests and build all passed at the end of Phase 0.
-The page itself has been verified by a server-render test, not yet by manual browser testing.
+Format check, lint, typecheck, tests and build all passed at the end of Phase 1. The pages were
+also loaded in headless Chromium at desktop and mobile widths, with no console errors and no
+horizontal overflow. That is a smoke check, not a cross-browser or assistive-technology audit.
 
 ## Project layout
 
 ```text
 src/
-  app/                 App shell (placeholder)
+  app/                 Routing (hash-based), workspace shell, navigation, pages
+  components/          Reusable UI: status chip, empty state, offline banner, error boundary
   content/
     packs/             Versioned content packs
     registry.ts        All packs the app knows about
   domain/              Pure types and rules (content model, pack validation)
-  styles/              Design tokens and global styles
+  features/tracks/     Track catalog and availability rules
+  styles/              Design tokens, contrast helpers, global and component styles
+.github/workflows/     CI: format, lint, typecheck, test, build
 docs/
   spec/                Original product and engineering spec (target design, not current state)
   adr/                 Architecture decision records
 legacy/cloudready/     Original vanilla dashboard, kept unchanged for reference only
 ```
 
-Folders named in the spec for later phases (`features/`, `infrastructure/`, `components/`) are
+Folders named in the spec for later phases (`infrastructure/` and the other `features/*`) are
 created when the code that belongs in them exists.
+
+## Accessibility so far
+
+Skip link, one `main` landmark, labelled navigation with `aria-current`, visible focus ring,
+reduced-motion support, 44px minimum touch targets, and status shown by icon plus text rather
+than colour alone. Focus moves to the page and the tab title updates on navigation. Colour
+contrast for text, focus ring and interactive borders is asserted in `src/styles/tokens.test.ts`.
+Screen-reader and cross-browser testing have not been done.
 
 ## Content policy
 
@@ -79,7 +96,11 @@ created when the code that belongs in them exists.
   product aims for.
 - The legacy dashboard's sample metrics and seeded revision items were deliberately **not**
   carried over, because they were not derived from real activity.
-- No persistence, auth, or analytics exist yet.
+- No persistence, auth, or analytics exist yet. Guest mode is simply the default: nothing is
+  stored, and "Guest mode" in the header does not represent a saved identity.
+- The offline notice relies on the browser's online/offline signal, which can be wrong. There is
+  no service worker, so reloading while offline fails.
+- The CI workflow has not been run on GitHub yet; it mirrors the local scripts.
 
 ## Security and privacy
 
@@ -91,4 +112,4 @@ trusted auth provider with server-side ownership checks; this is not configured.
 
 - `docs/spec/` — the original brief, requirements, flows, design system, architecture, domain
   model and build plan, plus the build prompt. Treat as the target, not the current state.
-- `docs/adr/` — decisions made so far (stack and tooling; evaluators as typed data).
+- `docs/adr/` — decisions made so far (stack and tooling; evaluators as typed data; hash routing).

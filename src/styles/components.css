@@ -1,0 +1,168 @@
+/* Reusable component styles. Layout lives in app/app.css. */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--target-size);
+  padding: var(--space-2) var(--space-6);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button-primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.button-primary:hover {
+  background: var(--color-accent);
+}
+
+.button-secondary {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.125rem var(--space-3);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chip-available {
+  color: var(--color-success);
+}
+
+.chip-in-development {
+  color: var(--color-warning);
+}
+
+.chip-planned {
+  color: var(--color-text-muted);
+}
+
+.card-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.card > .chip:last-child {
+  margin-top: auto;
+}
+
+.card h2,
+.card h3 {
+  font-size: var(--text-lg);
+}
+
+.card p {
+  color: var(--color-text-muted);
+}
+
+.panel {
+  margin-top: var(--space-6);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.panel h2 {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-lg);
+}
+
+.empty-state {
+  padding: var(--space-6);
+  text-align: center;
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-sm);
+}
+
+.empty-state h3 {
+  margin-bottom: var(--space-2);
+  font-size: var(--text-base);
+}
+
+.empty-state p,
+.hint,
+.disclaimer {
+  color: var(--color-text-muted);
+}
+
+.hint,
+.disclaimer {
+  font-size: var(--text-sm);
+}
+
+.banner {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-raised);
+  border-bottom: 2px solid var(--color-warning);
+  text-align: center;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 10;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: 0;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 700;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.status-list li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.status-list li:first-child {
+  border-top: 0;
+}
+
+.status-list p {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.plain-list li + li {
+  margin-top: var(--space-2);
+}

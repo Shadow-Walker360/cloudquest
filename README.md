@@ -82,6 +82,23 @@ Format check, lint, typecheck, tests and build all passed at the end of this mil
 also loaded in headless Chromium at desktop and mobile widths, with no console errors and no
 horizontal overflow. That is a smoke check, not a cross-browser or assistive-technology audit.
 
+## Deploying
+
+The build is a static site (`npm run build` writes `dist/`), so any static host works. Asset paths
+are relative and routing uses the URL hash, so it runs from a domain root or a sub-path with no
+server configuration.
+
+**GitHub Pages (automatic).** `.github/workflows/deploy.yml` lints, typechecks, tests, builds and
+publishes on every push to `main`. One-time setup: repository **Settings → Pages → Build and
+deployment → Source: GitHub Actions**. The site is then at
+`https://<your-user>.github.io/<repo>/`.
+
+**Any other static host** (Netlify, Vercel, Cloudflare Pages): build command `npm run build`,
+publish directory `dist`. Netlify also accepts the `dist` folder dragged onto its deploy page.
+
+The deployed site contains no secrets and makes no network requests to other services: all fonts
+are bundled and all data stays in the visitor's browser.
+
 ## Project layout
 
 ```text

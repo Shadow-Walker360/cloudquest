@@ -1,22 +1,35 @@
+import { Icon, type IconName } from '../../components/Icon.tsx'
+import { PageHeading } from '../../components/PageHeading.tsx'
 import { StatusChip } from '../../components/StatusChip.tsx'
 import { contentPacks } from '../../content/registry.ts'
+import type { Provider } from '../../domain/content.ts'
 import { trackAvailability, trackCatalog } from '../../features/tracks/tracks.ts'
+
+const TILE: Record<Provider, { icon: IconName; tone: string }> = {
+  azure: { icon: 'cloud', tone: 'blue' },
+  aws: { icon: 'cloud', tone: 'amber' },
+  gcp: { icon: 'cloud', tone: 'teal' },
+  neutral: { icon: 'tracks', tone: 'violet' },
+}
 
 export function TracksPage() {
   return (
     <>
-      <h1>Learning tracks</h1>
-      <p className="lead">
+      <PageHeading kicker="Skill paths" title="Learning tracks">
         A track becomes available only when reviewed content exists for it. Tracks are descriptive
         labels: CloudQuest is not affiliated with any cloud provider.
-      </p>
+      </PageHeading>
 
       <ul className="card-grid">
         {trackCatalog.map((track) => {
           const availability = trackAvailability(track.provider, contentPacks)
           const packs = contentPacks.filter((pack) => pack.provider === track.provider)
+          const tile = TILE[track.provider]
           return (
             <li key={track.provider} className="card">
+              <span className={`icon-tile icon-tile-${tile.tone}`}>
+                <Icon name={tile.icon} />
+              </span>
               <h2>{track.title}</h2>
               <p>{track.description}</p>
               <StatusChip status={availability.state} />

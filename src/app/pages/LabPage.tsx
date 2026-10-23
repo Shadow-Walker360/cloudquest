@@ -1,5 +1,7 @@
 import { ButtonLink } from '../../components/ButtonLink.tsx'
 import { EmptyState } from '../../components/EmptyState.tsx'
+import { Icon } from '../../components/Icon.tsx'
+import { PageHeading } from '../../components/PageHeading.tsx'
 import { StatusChip } from '../../components/StatusChip.tsx'
 import { contentPacks } from '../../content/registry.ts'
 import { listChallenges } from '../../features/scenarios/catalog.ts'
@@ -17,11 +19,10 @@ export function LabPage() {
 
   return (
     <>
-      <h1>Scenario Lab</h1>
-      <p className="lead">
+      <PageHeading kicker="Hands-on practice" title="Scenario Lab">
         Work through realistic cloud situations: read the context, weigh the constraints, make a
         decision, then see why it works or fails.
-      </p>
+      </PageHeading>
 
       {anyDraft && (
         <p className="notice" role="note">
@@ -38,6 +39,9 @@ export function LabPage() {
         <ul className="card-grid">
           {challenges.map(({ pack, scenario }) => (
             <li key={scenario.id} className="card">
+              <span className="icon-tile icon-tile-blue">
+                <Icon name="lab" />
+              </span>
               <h2>{scenario.title}</h2>
               <p>{scenario.summary}</p>
               <p className="hint">

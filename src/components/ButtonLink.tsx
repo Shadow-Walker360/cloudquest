@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 
 interface ButtonLinkProps {
   href: string
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary' | 'light'
   children: ReactNode
 }
 

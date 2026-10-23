@@ -10,42 +10,56 @@ html {
 
 body {
   margin: 0;
-  background: var(--color-bg);
+  background: var(--color-canvas);
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+ol {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
 }
 
 h1,
 h2,
 h3 {
-  margin: 0;
   line-height: var(--leading-tight);
 }
 
-p {
-  margin: 0;
-}
-
-ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+button {
+  font: inherit;
 }
 
 a {
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-accent);
+  outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
 
 /* Main is focused programmatically after navigation; it is not an interactive control. */
 main:focus {
   outline: none;
+}
+
+/* The gradient hero is blue, so the blue ring would vanish there. */
+.hero :focus-visible {
+  outline-color: #ffffff;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -79,7 +79,7 @@ describe('workspace', () => {
   it('shows an honest empty state and labels draft content as unreviewed', () => {
     renderAt('#/app')
     expect(screen.getByText('No activity yet')).toBeTruthy()
-    expect(screen.getAllByText(/\(not yet reviewed\)/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/not yet reviewed/i).length).toBeGreaterThan(0)
   })
 
   it('opens the Scenario Lab from the overview call to action', async () => {

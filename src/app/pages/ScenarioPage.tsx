@@ -1,4 +1,5 @@
 import { ButtonLink } from '../../components/ButtonLink.tsx'
+import { PageHeading } from '../../components/PageHeading.tsx'
 import { contentPacks } from '../../content/registry.ts'
 import { findChallenge, transferFor } from '../../features/scenarios/catalog.ts'
 import { ScenarioRunner } from '../../features/scenarios/ScenarioRunner.tsx'
@@ -11,8 +12,9 @@ export function ScenarioPage({ scenarioId }: { scenarioId: string }) {
   if (!challenge) {
     return (
       <>
-        <h1>Scenario not found</h1>
-        <p className="lead">That scenario does not exist, or it is no longer available.</p>
+        <PageHeading kicker="Scenario Lab" title="Scenario not found">
+          That scenario does not exist, or it is no longer available.
+        </PageHeading>
         <div className="page-actions">
           <ButtonLink href={labHref}>Back to Scenario Lab</ButtonLink>
         </div>

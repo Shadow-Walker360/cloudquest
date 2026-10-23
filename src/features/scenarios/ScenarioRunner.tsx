@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useRef } from 'react'
 import { ButtonLink } from '../../components/ButtonLink.tsx'
-import type { ContentPack, Scenario } from '../../domain/content.ts'
+import { PageHeading } from '../../components/PageHeading.tsx'
+import type { ContentPack, Scenario, ScenarioOption } from '../../domain/content.ts'
 import { initialRunnerState, runnerReducer, type RunnerAction, type RunnerState } from './runner.ts'
 
 const DIFFICULTY = {
@@ -49,9 +50,16 @@ export function ScenarioRunner({ pack, scenario, labHref, transferHref }: Scenar
       )
     : []
 
+  const optionClass = (option: ScenarioOption): string => {
+    if (!evaluation) return 'option'
+    if (option.id === evaluation.correctOptionId) return 'option option-best'
+    if (option.id === evaluation.selectedOptionId) return 'option option-wrong'
+    return 'option'
+  }
+
   return (
-    <article className="runner" aria-labelledby="scenario-title">
-      <p>
+    <article className="runner">
+      <p className="back-link">
         <a href={labHref}>← Back to Scenario Lab</a>
       </p>
 
@@ -63,107 +71,115 @@ export function ScenarioRunner({ pack, scenario, labHref, transferHref }: Scenar
         </p>
       )}
 
-      <h1 id="scenario-title">{scenario.title}</h1>
-      <p className="hint">
+      <PageHeading kicker="Scenario Lab" title={scenario.title}>
         {DIFFICULTY[scenario.difficulty]} · about {scenario.estimatedMinutes} min
-      </p>
+      </PageHeading>
 
-      <section aria-labelledby="situation-heading">
-        <h2 id="situation-heading">Situation</h2>
-        <p>{scenario.context}</p>
-      </section>
+      <div className="quiz-card">
+        <p className="quiz-meta">
+          <span>{objectives.map((objective) => objective.title).join(' · ')}</span>
+        </p>
 
-      {scenario.constraints.length > 0 && (
-        <section aria-labelledby="constraints-heading">
-          <h2 id="constraints-heading">Constraints</h2>
-          <ul className="bullet-list">
-            {scenario.constraints.map((constraint) => (
-              <li key={constraint}>{constraint}</li>
-            ))}
-          </ul>
+        <section aria-labelledby="situation-heading">
+          <h2 id="situation-heading">Situation</h2>
+          <p>{scenario.context}</p>
         </section>
-      )}
 
-      <section aria-labelledby="task-heading">
-        <h2 id="task-heading">Your task</h2>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault()
-            dispatch({ type: 'submit' })
-          }}
-        >
-          <fieldset disabled={evaluation !== null}>
-            <legend>{scenario.task}</legend>
-            {scenario.options.map((option) => (
-              <label key={option.id} className="option">
-                <input
-                  type="radio"
-                  name={`${scenario.id}-option`}
-                  value={option.id}
-                  checked={state.selectedOptionId === option.id}
-                  onChange={() => dispatch({ type: 'select', optionId: option.id })}
-                />
-                <span>
-                  {option.label}
-                  {evaluation && option.id === evaluation.correctOptionId && (
-                    <span className="option-tag option-tag-best">✓ Best fit</span>
-                  )}
-                  {evaluation &&
-                    option.id === evaluation.selectedOptionId &&
-                    evaluation.outcome === 'incorrect' && (
-                      <span className="option-tag">Your choice</span>
+        {scenario.constraints.length > 0 && (
+          <section aria-labelledby="constraints-heading">
+            <h2 id="constraints-heading">Constraints</h2>
+            <ul className="bullet-list">
+              {scenario.constraints.map((constraint) => (
+                <li key={constraint}>{constraint}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <section aria-labelledby="task-heading">
+          <h2 id="task-heading">Your task</h2>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault()
+              dispatch({ type: 'submit' })
+            }}
+          >
+            <fieldset disabled={evaluation !== null}>
+              <legend>{scenario.task}</legend>
+              {scenario.options.map((option, index) => (
+                <label key={option.id} className={optionClass(option)}>
+                  <input
+                    type="radio"
+                    name={`${scenario.id}-option`}
+                    value={option.id}
+                    checked={state.selectedOptionId === option.id}
+                    onChange={() => dispatch({ type: 'select', optionId: option.id })}
+                  />
+                  <span className="option-letter" aria-hidden="true">
+                    {String.fromCharCode(65 + index)}
+                  </span>
+                  <span className="option-text">
+                    {option.label}
+                    {evaluation && option.id === evaluation.correctOptionId && (
+                      <span className="option-tag option-tag-best">✓ Best fit</span>
                     )}
-                </span>
-              </label>
-            ))}
-          </fieldset>
+                    {evaluation &&
+                      option.id === evaluation.selectedOptionId &&
+                      evaluation.outcome === 'incorrect' && (
+                        <span className="option-tag">Your choice</span>
+                      )}
+                  </span>
+                </label>
+              ))}
+            </fieldset>
 
-          {scenario.hints.length > 0 && (!evaluation || revealedHints.length > 0) && (
-            <div className="hints">
-              <h3>Hints</h3>
-              <ol className="hint-list" aria-live="polite">
-                {revealedHints.map((hint) => (
-                  <li key={hint.order}>{hint.text}</li>
-                ))}
-              </ol>
-              {!evaluation && (
-                <>
-                  <button
-                    type="button"
-                    className="button button-secondary"
-                    disabled={allHintsShown}
-                    onClick={() => dispatch({ type: 'reveal-hint' })}
-                  >
-                    {state.hintsRevealed === 0
-                      ? 'Show a hint'
-                      : allHintsShown
-                        ? 'No more hints'
-                        : 'Show another hint'}
-                  </button>
-                  <p className="hint">
-                    {state.hintsRevealed} of {scenario.hints.length} hints shown
-                  </p>
-                </>
-              )}
-            </div>
-          )}
+            {scenario.hints.length > 0 && (!evaluation || revealedHints.length > 0) && (
+              <div className="hints">
+                <h3>Hints</h3>
+                <ol className="hint-list" aria-live="polite">
+                  {revealedHints.map((hint) => (
+                    <li key={hint.order}>{hint.text}</li>
+                  ))}
+                </ol>
+                {!evaluation && (
+                  <>
+                    <button
+                      type="button"
+                      className="button button-secondary"
+                      disabled={allHintsShown}
+                      onClick={() => dispatch({ type: 'reveal-hint' })}
+                    >
+                      {state.hintsRevealed === 0
+                        ? 'Show a hint'
+                        : allHintsShown
+                          ? 'No more hints'
+                          : 'Show another hint'}
+                    </button>
+                    <p className="hint">
+                      {state.hintsRevealed} of {scenario.hints.length} hints shown
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
 
-          {!evaluation && (
-            <div className="runner-actions">
-              <button
-                type="submit"
-                className="button button-primary"
-                disabled={state.selectedOptionId === null}
-              >
-                Submit decision
-              </button>
-              {state.selectedOptionId === null && (
-                <p className="hint">Choose an option to continue.</p>
-              )}
-            </div>
-          )}
-        </form>
-      </section>
+            {!evaluation && (
+              <div className="runner-actions">
+                <button
+                  type="submit"
+                  className="button button-primary"
+                  disabled={state.selectedOptionId === null}
+                >
+                  Submit decision
+                </button>
+                {state.selectedOptionId === null && (
+                  <p className="hint">Choose an option to continue.</p>
+                )}
+              </div>
+            )}
+          </form>
+        </section>
+      </div>
 
       {evaluation && chosen && best && (
         <section

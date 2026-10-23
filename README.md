@@ -31,7 +31,7 @@ shown. Attempts are not saved yet.
 
 ## Setup
 
-Requires Node.js (developed on v22) and npm. Dependencies are locked in `package-lock.json`.
+Requires Node.js 22.22.2 or newer (see `.nvmrc`) and npm. Dependencies are locked in `package-lock.json`.
 
 ```bash
 npm install
@@ -73,15 +73,27 @@ legacy/cloudready/     Original vanilla dashboard, kept unchanged for reference 
 Folders named in the spec for later phases (`infrastructure/` and the other `features/*`) are
 created when the code that belongs in them exists.
 
+## Visual design
+
+The look is adapted from the original CloudReady dashboard (kept in `legacy/cloudready/`): light
+canvas, white sidebar, gradient hero, tinted icon tiles, soft panels and a lettered quiz card, in
+Inter (self-hosted, no external font requests). It is driven by tokens in
+`src/styles/tokens.css`. Two deliberate departures, for legibility: text and buttons use a slightly
+deeper blue than the original, and muted greys are darker. The original's invented sample numbers
+were not carried over: every number on screen is derived from real state. See
+`docs/adr/0005-cloudready-visual-design.md`.
+
 ## Accessibility so far
 
-Skip link, one `main` landmark, labelled navigation with `aria-current`, visible focus ring,
+Skip link, one `main` landmark, labelled navigation with `aria-current`, a breadcrumb, visible focus ring,
 reduced-motion support, 44px minimum touch targets, and status shown by icon plus text rather
 than colour alone. Focus moves to the page and the tab title updates on navigation. Colour
 contrast for text, focus ring and interactive borders is asserted in `src/styles/tokens.test.ts`.
-An automated axe-core audit (WCAG 2.2 A/AA and best-practice rules) of the Scenario Lab list,
-a scenario while answering, its feedback, the fresh variant, and the mobile feedback view found
-no violations. Automated tools catch only part of what matters: screen-reader and
+An automated axe-core audit (WCAG 2.2 A/AA and best-practice rules, including colour contrast)
+of the landing page, overview, Scenario Lab list, tracks, a scenario while answering and in
+feedback, the mobile views and the open mobile menu found no violations. On mobile, the
+navigation drawer is hidden from the tab order when closed, makes the page behind it inert when
+open, and closes with Escape. Automated tools catch only part of what matters: screen-reader and
 cross-browser testing have not been done.
 
 In the Scenario Lab, feedback is delivered by moving focus to the result heading, hints are

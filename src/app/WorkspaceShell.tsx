@@ -3,6 +3,7 @@ import { Disclaimer } from '../components/Disclaimer.tsx'
 import { Icon } from '../components/Icon.tsx'
 import { StatusChip } from '../components/StatusChip.tsx'
 import { Main, MAIN_ID } from './Main.tsx'
+import { useStore } from '../features/progress/useStore.ts'
 import { currentFeature, features, isCurrent } from './navigation.ts'
 import { hrefFor, routeKey, type Route } from './routes.ts'
 
@@ -18,6 +19,8 @@ export function WorkspaceShell({ route, children }: { route: Route; children: Re
   const menuOpen = openForPage === pageKey
   const setMenuOpen = (open: boolean) => setOpenForPage(open ? pageKey : null)
   const pageLabel = currentFeature(route)?.label ?? 'Workspace'
+  const { data } = useStore()
+  const studentName = data.profile.displayName
 
   // While the drawer is open: focus moves into it, Escape closes it and returns focus to the
   // menu button, and growing to desktop width closes it.
@@ -96,16 +99,16 @@ export function WorkspaceShell({ route, children }: { route: Route; children: Re
               <Icon name="info" />
             </span>
             <p>
-              <strong>Nothing is saved yet</strong>
-              <span>Saving your progress is planned.</span>
+              <strong>Saved on this device</strong>
+              <span>No account. Export or delete it in My notebook.</span>
             </p>
           </div>
           <div className="profile">
             <span className="avatar" aria-hidden="true">
-              G
+              {(studentName.trim().charAt(0) || 'G').toUpperCase()}
             </span>
             <p>
-              <strong>Guest</strong>
+              <strong>{studentName || 'Guest'}</strong>
               <span>Accounts are not available yet</span>
             </p>
           </div>

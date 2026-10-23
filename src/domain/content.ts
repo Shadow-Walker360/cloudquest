@@ -103,5 +103,7 @@ export interface ContentPack {
   /** ISO date; required when status is `reviewed`. */
   reviewedAt?: string
   objectives: Objective[]
+  /** Plain-language name for each misconception tag, shown on the learner's progress board. */
+  misconceptionLabels?: Record<string, string>
   scenarios: Scenario[]
 }

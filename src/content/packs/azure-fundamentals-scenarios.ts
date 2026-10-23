@@ -169,5 +169,13 @@ export const azureFundamentalsScenariosPack: ContentPack = {
   authors: ['CloudQuest project'],
   reviewers: [],
   objectives: azureObjectives,
+  misconceptionLabels: {
+    'scale-up-vs-availability': 'A bigger machine is not a more available one',
+    'region-vs-zone': 'Mixing up a region and an Availability Zone',
+    'backup-vs-availability': 'Backups are not the same as staying online',
+    'availability-vs-scaling': 'Mixing up availability and scaling',
+    'scale-up-vs-elasticity': 'Paying for peak capacity all the time',
+    'backup-vs-scaling': 'Backups do not add capacity',
+  },
   scenarios: [datacenterOutage, saleDaySlowdown],
 }

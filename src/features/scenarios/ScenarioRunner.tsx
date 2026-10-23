@@ -1,7 +1,10 @@
 import { useEffect, useReducer, useRef } from 'react'
 import { ButtonLink } from '../../components/ButtonLink.tsx'
+import { Icon } from '../../components/Icon.tsx'
 import { PageHeading } from '../../components/PageHeading.tsx'
+import { TornPage } from '../../components/TornPage.tsx'
 import type { ContentPack, Scenario, ScenarioOption } from '../../domain/content.ts'
+import { evaluateScenario, type Evaluation } from './evaluate.ts'
 import { initialRunnerState, runnerReducer, type RunnerAction, type RunnerState } from './runner.ts'
 
 const DIFFICULTY = {
@@ -16,10 +19,21 @@ interface ScenarioRunnerProps {
   labHref: string
   /** Link to the fresh-context variant, when the scenario has one. */
   transferHref?: string
+  /** Called once, when the learner submits a decision. */
+  onAttempt?: (result: { evaluation: Evaluation; hintsUsed: number }) => void
+  /** Lets the learner keep this concept for spaced review. */
+  revision?: { added: boolean; onAdd: (evaluation: Evaluation) => void; studioHref: string }
 }
 
 /** One attempt at one scenario. Mount it with `key={scenario.id}` so each scenario starts fresh. */
-export function ScenarioRunner({ pack, scenario, labHref, transferHref }: ScenarioRunnerProps) {
+export function ScenarioRunner({
+  pack,
+  scenario,
+  labHref,
+  transferHref,
+  onAttempt,
+  revision,
+}: ScenarioRunnerProps) {
   const [state, dispatch] = useReducer(
     (current: RunnerState, action: RunnerAction) => runnerReducer(scenario, current, action),
     initialRunnerState,
@@ -101,6 +115,11 @@ export function ScenarioRunner({ pack, scenario, labHref, transferHref }: Scenar
           <form
             onSubmit={(event) => {
               event.preventDefault()
+              if (state.phase !== 'answering' || state.selectedOptionId === null) return
+              const result = evaluateScenario(scenario, state.selectedOptionId)
+              if (!result) return
+              // Recording happens here, in the event handler, so it runs exactly once per submit.
+              onAttempt?.({ evaluation: result, hintsUsed: state.hintsRevealed })
               dispatch({ type: 'submit' })
             }}
           >
@@ -205,8 +224,10 @@ export function ScenarioRunner({ pack, scenario, labHref, transferHref }: Scenar
             </>
           )}
 
-          <h3>Why</h3>
-          <p>{scenario.explanation}</p>
+          <TornPage labelledBy="why-heading" className="torn-note">
+            <h3 id="why-heading">Why</h3>
+            <p>{scenario.explanation}</p>
+          </TornPage>
 
           {otherOptions.length > 0 && (
             <>
@@ -250,6 +271,23 @@ export function ScenarioRunner({ pack, scenario, labHref, transferHref }: Scenar
               <ButtonLink href={labHref}>Back to Scenario Lab</ButtonLink>
             )}
           </div>
+          {revision && (
+            <div className="revision-add">
+              <button
+                type="button"
+                className="button button-secondary"
+                disabled={revision.added}
+                onClick={() => revision.onAdd(evaluation)}
+              >
+                <Icon name="revision" size={16} />{' '}
+                {revision.added ? 'Added to revision' : 'Add to revision'}
+              </button>
+              {revision.added && <a href={revision.studioHref}>Open the Revision Studio</a>}
+              <p className="hint" role="status">
+                {revision.added ? 'This concept will come back for review.' : ''}
+              </p>
+            </div>
+          )}
           {evaluation.outcome === 'incorrect' && transferHref && (
             <p className="hint">
               A fresh variant tests the same idea in a different situation, so you are applying it

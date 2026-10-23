@@ -12,6 +12,8 @@ describe('parseHash', () => {
     expect(parseHash('#/app')).toEqual({ name: 'overview' })
     expect(parseHash('#/app/tracks')).toEqual({ name: 'tracks' })
     expect(parseHash('#/app/lab')).toEqual({ name: 'lab' })
+    expect(parseHash('#/app/revision')).toEqual({ name: 'revision' })
+    expect(parseHash('#/app/profile')).toEqual({ name: 'profile' })
   })
 
   it('parses a scenario route and keeps its id', () => {
@@ -44,7 +46,7 @@ describe('parseHash', () => {
 
 describe('hrefFor', () => {
   it('round-trips with parseHash', () => {
-    for (const name of ['landing', 'overview', 'tracks', 'lab'] as const) {
+    for (const name of ['landing', 'overview', 'tracks', 'lab', 'revision', 'profile'] as const) {
       expect(parseHash(hrefFor({ name })).name).toBe(name)
     }
     const scenario: Route = { name: 'scenario', scenarioId: 'a-b-1' }
@@ -54,9 +56,9 @@ describe('hrefFor', () => {
 
 describe('routeTitle', () => {
   it('gives every route a distinct title', () => {
-    const titles = (['landing', 'overview', 'tracks', 'lab', 'not-found'] as const).map((name) =>
-      routeTitle({ name }),
-    )
+    const titles = (
+      ['landing', 'overview', 'tracks', 'lab', 'revision', 'profile', 'not-found'] as const
+    ).map((name) => routeTitle({ name }))
     expect(new Set(titles).size).toBe(titles.length)
   })
 })

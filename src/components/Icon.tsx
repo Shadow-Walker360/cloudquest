@@ -13,6 +13,12 @@ const PATHS = {
   menu: 'M4 7h16M4 12h16M4 17h16',
   close: 'M6 6l12 12M18 6L6 18',
   check: 'M5 12.5l4.5 4.5L19 7.5',
+  notebook: 'M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6zM6 3v18M10 8h5M10 12h5M10 16h3',
+  note: 'M5 4h14v11l-5 5H5zM14 20v-5h5',
+  trash: 'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
+  download: 'M12 4v11M7.5 11L12 15.5 16.5 11M5 20h14',
+  plus: 'M12 5v14M5 12h14',
+  edit: 'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4',
 } as const
 
 export type IconName = keyof typeof PATHS

@@ -25,22 +25,22 @@ describe('workspace chrome', () => {
     expect(screen.getByText('Guest mode')).toBeTruthy()
   })
 
-  it('is honest in the sidebar: nothing is saved and accounts are unavailable', () => {
+  it('is honest in the sidebar: saved only on this device, and no accounts', () => {
     renderAt('#/app')
-    expect(screen.getByText('Nothing is saved yet')).toBeTruthy()
+    expect(screen.getByText('Saved on this device')).toBeTruthy()
     expect(screen.getByText('Accounts are not available yet')).toBeTruthy()
   })
 
   it('shows real numbers on the overview, never invented ones', () => {
     renderAt('#/app')
-    const stats = screen.getAllByText(
-      /Scenarios to try|Content packs|Tracks available|Attempts saved/,
-    )
-    expect(stats).toHaveLength(4)
-    const attempts = screen.getByText('Attempts saved').closest('li') as HTMLElement
-    expect(within(attempts).getByText('0')).toBeTruthy()
-    const tracks = screen.getByText('Tracks available').closest('li') as HTMLElement
-    expect(tracks.textContent).toMatch(/0\s*of 4/)
+    const labels = ['Scenarios to try', 'Attempts saved', 'Reviews due', 'Objectives assessed']
+    for (const label of labels) expect(screen.getByText(label)).toBeTruthy()
+    for (const label of ['Attempts saved', 'Reviews due']) {
+      const card = screen.getByText(label).closest('li') as HTMLElement
+      expect(within(card).getByText('0')).toBeTruthy()
+    }
+    const assessed = screen.getByText('Objectives assessed').closest('li') as HTMLElement
+    expect(assessed.textContent).toMatch(/0\s*of 3/)
     // The original dashboard's fake sample metrics must never come back.
     expect(screen.queryByText('76')).toBeNull()
     expect(screen.queryByText(/78/)).toBeNull()

@@ -6,28 +6,60 @@
 > Google. It does not reproduce official certification exam questions. The name "CloudQuest" is
 > provisional: domain, existing-product and trademark availability have not been checked.
 
-## Current status: Phase 2 (Scenario Lab slice)
+## Current status
 
-A guest can open the Scenario Lab, work through an original scenario with progressive hints,
-get reasoning-based feedback, and continue to a fresh variant that tests the idea in a changed
-context. **All scenario content is draft and unreviewed**, and the app says so wherever it is
-shown. Attempts are not saved yet.
+A guest can learn, practise and track progress end to end: answer scenarios with hints and
+reasoning feedback, move to a fresh variant, keep missed concepts and their own sticky-note cards
+in a spaced revision queue, and see an analytics board built only from their real attempts, all
+saved on their own device. **The Architecture Canvas, track selection and a second content pack
+are not built yet.** All scenario content is draft and unreviewed, and the app says so.
 
-| Capability                                                 | Status                                                                                               |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Vite + React + strict TypeScript, tests, CI workflow       | Implemented (CI workflow not yet run on GitHub)                                                      |
-| Typed content model, pack validator, authoring rules       | Implemented, unit-tested                                                                             |
-| Landing page, guest entry, responsive workspace shell      | Implemented                                                                                          |
-| Learning tracks overview                                   | Implemented. Informational: no track is available because no content is reviewed                     |
-| Scenario Lab: context, constraints, decision, hints        | Implemented as a **draft preview**: 1 scenario + 1 transfer variant, both unreviewed                 |
-| Typed evaluator, per-option rationales, misconception tags | Implemented, unit-tested (`single-choice-exact` only)                                                |
-| Fresh transfer variant after feedback                      | Implemented; validator enforces a changed context                                                    |
-| Saving attempts, hint usage, scheduling revision, progress | Planned (Phase 3). Nothing is stored; "Guest mode" is only a label                                   |
-| Architecture Canvas and simulation                         | Planned (Phase 4)                                                                                    |
-| Second pack, track switching, demo auth                    | Planned (Phase 5)                                                                                    |
-| Real authentication                                        | Not configured. Only clearly labelled demo screens will be built unless a trusted provider is set up |
-| Loading states                                             | Not yet: nothing loads asynchronously                                                                |
-| Full accessibility and responsive audit                    | Planned (Phase 6). Checks done so far are listed under "Accessibility so far"                        |
+| Capability                                                         | Status                                                                      |
+| ------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| Vite + React + strict TypeScript, tests, CI workflow               | Implemented (CI workflow not yet run on GitHub)                             |
+| Typed content model, pack validator, authoring rules               | Implemented, unit-tested                                                    |
+| CloudReady visual design, responsive shell, mobile drawer          | Implemented, token-driven (ADR 0005)                                        |
+| Landing page and guest entry (no sign-up)                          | Implemented                                                                 |
+| Scenario Lab: context, constraints, hints, feedback, fresh variant | Implemented as a **draft preview**: 1 scenario + 1 variant, both unreviewed |
+| Attempts saved on the device, validated on load                    | Implemented (ADR 0006)                                                      |
+| Revision Studio: add mistakes, review, Again/Hard/Recalled         | Implemented; deterministic scheduler, unit-tested                           |
+| Sticky-note cards the student writes                               | Implemented                                                                 |
+| Student notebook: editable profile and progress board              | Implemented; every figure derived from real attempts                        |
+| Export and deletion of all data                                    | Implemented, documented in `docs/privacy-and-data.md`                       |
+| Learning tracks overview                                           | Implemented, informational: no track can be selected yet                    |
+| Track selection, second content pack, demo auth                    | Planned                                                                     |
+| Architecture Canvas, simulation, keyboard alternative              | Planned                                                                     |
+| Real authentication                                                | Not configured. There are no accounts; the app says so                      |
+| Loading states                                                     | Not needed yet: nothing loads asynchronously                                |
+| Full accessibility and responsive audit                            | Planned. Checks done so far are listed under "Accessibility so far"         |
+
+## Hackathon checklist
+
+The acceptance criteria from `docs/spec/01-requirements.md` and `docs/spec/06-build-plan-and-demo.md`,
+with their real status. "Open" means not done.
+
+| Criterion                                                           | Status  | Notes                                                                                   |
+| ------------------------------------------------------------------- | ------- | --------------------------------------------------------------------------------------- |
+| Guest completes a sample scenario                                   | Done    | No sign-up needed                                                                       |
+| Track selection and objective view work                             | Partial | Objectives are shown with evidence in the notebook. Tracks cannot be selected: **open** |
+| Evaluation, feedback, hints and transfer retry work                 | Done    |                                                                                         |
+| Mistakes can enter revision; review outcomes reschedule             | Done    |                                                                                         |
+| Progress is computed from actual evidence                           | Done    | Rules in `features/progress/evidence.ts`; not an exam prediction                        |
+| Guided canvas supports documented nodes, edges and simulation       | Open    | Phase 4                                                                                 |
+| Canvas has keyboard / non-drag alternatives                         | Open    | Phase 4                                                                                 |
+| Tests cover evaluators, scheduler, graph validation and simulation  | Partial | Evaluators, scheduler, storage, evidence: done. Graph and simulation: open              |
+| Lint / typecheck / tests / build pass                               | Done    | Run before every release                                                                |
+| README reflects the actual implementation and limitations           | Done    | This file                                                                               |
+| Setup commands in the README are verified against the real scripts  | Done    | Every script listed was run                                                             |
+| No dead primary buttons or fake integrations                        | Done    | Unbuilt features are labelled "Planned" and are not links                               |
+| Guest flow works                                                    | Done    |                                                                                         |
+| Auth state is honestly represented                                  | Done    | There are no accounts; the UI and docs say so                                           |
+| Responsive and keyboard flows work                                  | Partial | Implemented screens audited (axe, keyboard-only). No screen-reader testing              |
+| Simulation is deterministic and scoped                              | Open    | Phase 4                                                                                 |
+| Content maps to objectives and sources                              | Partial | Mapped and linked, but the content is **draft** and sources are unverified              |
+| Persistence and privacy limitations are documented                  | Done    | `docs/privacy-and-data.md`                                                              |
+| No real cloud credentials or resources used                         | Done    | None are used or requested                                                              |
+| README distinguishes implemented, partial, planned and known issues | Done    | See the tables above and "Known limitations"                                            |
 
 ## Setup
 
@@ -46,7 +78,7 @@ npm run format       # prettier --write
 npm run format:check # prettier --check
 ```
 
-Format check, lint, typecheck, tests and build all passed at the end of Phase 2. The pages were
+Format check, lint, typecheck, tests and build all passed at the end of this milestone. The pages were
 also loaded in headless Chromium at desktop and mobile widths, with no console errors and no
 horizontal overflow. That is a smoke check, not a cross-browser or assistive-technology audit.
 
@@ -59,7 +91,10 @@ src/
   content/
     packs/             Versioned content packs
     registry.ts        All packs the app knows about
-  domain/              Pure types and rules (content model, pack validation)
+  domain/              Pure types and rules (content model, pack validation, learner data)
+  infrastructure/      Storage, ids, file download
+  features/progress/   Store, validation, evidence rules, analytics, profile and board UI
+  features/revision/   Scheduler, review session, sticky-card form
   features/scenarios/  Evaluator, attempt state machine, catalog, ScenarioRunner UI
   features/tracks/     Track catalog and availability rules
   styles/              Design tokens, contrast helpers, global and component styles
@@ -122,25 +157,30 @@ radio group.
 - The nine legacy questions are plain knowledge checks. They are validated and kept in the repo
   but deliberately **not shown** in the Scenario Lab, which is for scenario-style challenges.
 - There is one scenario and one variant, so the lab is a vertical slice, not a curriculum.
-- Hint usage and answers are not recorded anywhere yet (Phase 3).
+- Progress is stored only in this browser: it is not synced, not backed up, and is lost if the
+  browser data is cleared. Export it from My notebook if it matters.
 - The legacy dashboard's sample metrics and seeded revision items were deliberately **not**
   carried over, because they were not derived from real activity.
-- No persistence, auth, or analytics exist yet. Guest mode is simply the default: nothing is
-  stored, and "Guest mode" in the header does not represent a saved identity.
+- There are no accounts, server or analytics. "Guest mode" means no sign-in: the optional profile a
+  student writes is saved only on their own device.
 - The offline notice relies on the browser's online/offline signal, which can be wrong. There is
   no service worker, so reloading while offline fails.
 - The CI workflow has not been run on GitHub yet; it mirrors the local scripts.
 
 ## Security and privacy
 
-No secrets, cloud credentials, or provisioning are involved. Browser local storage (planned for
-demo progress) is not secure account storage and can be cleared. Real accounts will require a
-trusted auth provider with server-side ownership checks; this is not configured.
+No secrets, cloud credentials, or provisioning are involved, and no data leaves the device. The
+learner's profile, attempts and cards are kept in the browser's local storage, which is validated
+on every load, can be exported or deleted from My notebook, and is **not** secure account storage:
+anyone with access to the browser profile can read it. Real accounts would require a trusted auth
+provider with server-side ownership checks; this is not configured. Details and failure
+behaviour: `docs/privacy-and-data.md`.
 
 ## Documentation
 
 - `docs/spec/` — the original brief, requirements, flows, design system, architecture, domain
   model and build plan, plus the build prompt. Treat as the target, not the current state.
 - `docs/adr/` — decisions made so far (stack and tooling; evaluators as typed data; hash routing;
-  draft-preview policy).
+  draft-preview policy; CloudReady design; local-first persistence).
 - `docs/content-authoring.md` — how scenarios are structured and how to review one.
+- `docs/privacy-and-data.md` — exactly what is stored, where, and how to export or delete it.

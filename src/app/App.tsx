@@ -1,11 +1,15 @@
 import { useEffect, useRef } from 'react'
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx'
 import { OfflineBanner } from '../components/OfflineBanner.tsx'
+import { StorageNotice } from '../components/StorageNotice.tsx'
+import { StoreProvider } from '../features/progress/StoreProvider.tsx'
 import { MAIN_ID } from './Main.tsx'
 import { LabPage } from './pages/LabPage.tsx'
 import { LandingPage } from './pages/LandingPage.tsx'
 import { NotFoundPage } from './pages/NotFoundPage.tsx'
 import { OverviewPage } from './pages/OverviewPage.tsx'
+import { ProfilePage } from './pages/ProfilePage.tsx'
+import { RevisionPage } from './pages/RevisionPage.tsx'
 import { ScenarioPage } from './pages/ScenarioPage.tsx'
 import { TracksPage } from './pages/TracksPage.tsx'
 import { routeKey, routeTitle, type Route } from './routes.ts'
@@ -50,6 +54,18 @@ function RouteView({ route }: { route: Route }) {
           <LabPage />
         </WorkspaceShell>
       )
+    case 'revision':
+      return (
+        <WorkspaceShell route={route}>
+          <RevisionPage />
+        </WorkspaceShell>
+      )
+    case 'profile':
+      return (
+        <WorkspaceShell route={route}>
+          <ProfilePage />
+        </WorkspaceShell>
+      )
     case 'scenario':
       return (
         <WorkspaceShell route={route}>
@@ -66,9 +82,12 @@ export default function App() {
   useRouteEffects(route)
   return (
     <ErrorBoundary>
-      <SkipLink />
-      <OfflineBanner />
-      <RouteView route={route} />
+      <StoreProvider>
+        <SkipLink />
+        <OfflineBanner />
+        <StorageNotice />
+        <RouteView route={route} />
+      </StoreProvider>
     </ErrorBoundary>
   )
 }

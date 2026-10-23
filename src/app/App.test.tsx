@@ -38,7 +38,8 @@ describe('landing page', () => {
     renderAt('')
     const section = screen.getByRole('region', { name: 'What CloudQuest is building' })
     expect(within(section).getAllByText(/In development/)).toHaveLength(1)
-    expect(within(section).getAllByText(/Planned/)).toHaveLength(2)
+    expect(within(section).getAllByText(/Planned/)).toHaveLength(1)
+    expect(within(section).getAllByText(/Available/)).toHaveLength(1)
   })
 
   it('lets a guest enter the workspace, updating the title and moving focus', async () => {
@@ -63,17 +64,20 @@ describe('workspace', () => {
     ).toBeNull()
   })
 
-  it('links to the Scenario Lab but not to features that do not exist yet', () => {
+  it('links to features that exist and not to the one that does not yet', () => {
     renderAt('#/app')
     const nav = screen.getByRole('navigation', { name: 'Workspace' })
-    expect(within(nav).getByRole('link', { name: 'Scenario Lab' }).getAttribute('href')).toBe(
-      '#/app/lab',
-    )
-    for (const label of ['Architecture Canvas', 'Revision Studio', 'Progress']) {
-      expect(within(nav).queryByRole('link', { name: new RegExp(label) })).toBeNull()
-      expect(within(nav).getByText(new RegExp(label))).toBeTruthy()
+    const hrefs: Record<string, string> = {
+      'Scenario Lab': '#/app/lab',
+      'Revision Studio': '#/app/revision',
+      'My notebook': '#/app/profile',
     }
-    expect(within(nav).getAllByText(/Planned/)).toHaveLength(3)
+    for (const [name, href] of Object.entries(hrefs)) {
+      expect(within(nav).getByRole('link', { name }).getAttribute('href')).toBe(href)
+    }
+    expect(within(nav).queryByRole('link', { name: /Architecture Canvas/ })).toBeNull()
+    expect(within(nav).getByText(/Architecture Canvas/)).toBeTruthy()
+    expect(within(nav).getAllByText(/Planned/)).toHaveLength(1)
   })
 
   it('shows an honest empty state and labels draft content as unreviewed', () => {

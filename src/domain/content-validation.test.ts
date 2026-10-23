@@ -46,6 +46,7 @@ function makePack(overrides: Partial<ContentPack> = {}): ContentPack {
     authors: ['Tester'],
     reviewers: [],
     objectives: [{ id: 'o1', title: 'Objective', description: 'Desc', sourceRefs: [source] }],
+    misconceptionLabels: { 'tag-b': 'Mixing up B' },
     scenarios: [makeScenario()],
     ...overrides,
   }
@@ -161,6 +162,14 @@ describe('validatePack', () => {
   it('rejects malformed dates', () => {
     const scenario = makeScenario({ reviewedAt: 'last tuesday' })
     expect(codes(makePack({ scenarios: [scenario] }))).toContain('invalid-date')
+  })
+
+  it('requires a readable label for every misconception tag used', () => {
+    const issues = validatePack(makePack({ misconceptionLabels: {} }))
+    expect(issues.map((i) => i.path)).toContain('scenarios[0].misconceptionTags')
+    expect(codes(makePack({ misconceptionLabels: { 'tag-b': '  ' } }))).toContain(
+      'invalid-misconception',
+    )
   })
 
   it('requires URL-safe scenario ids', () => {

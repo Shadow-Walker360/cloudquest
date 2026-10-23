@@ -54,6 +54,7 @@ describe('brand and status colours', () => {
   it.each([
     ['color-on-primary', 'color-primary-strong'],
     ['color-on-primary', 'color-primary-hover'],
+    ['color-on-primary', 'color-danger'],
     ['color-success', 'color-success-bg'],
     ['color-success', 'color-surface'],
     ['color-warning', 'color-warning-bg'],
@@ -88,5 +89,31 @@ describe('non-text contrast (3:1)', () => {
 
   it('shows the primary colour as an icon on its tint', () => {
     expect(ratio('color-primary-strong', 'color-surface-tint')).toBeGreaterThanOrEqual(3)
+  })
+})
+
+describe('notebook paper and sticky notes', () => {
+  const papers = [
+    'color-surface',
+    'paper',
+    'sticky-yellow',
+    'sticky-pink',
+    'sticky-blue',
+    'sticky-green',
+  ]
+
+  it.each(papers)('body text is readable on %s', (paper) => {
+    expect(ratio('color-text', paper)).toBeGreaterThanOrEqual(7)
+  })
+
+  it.each(['paper'])('muted text and links are readable on %s', (paper) => {
+    expect(ratio('color-text-muted', paper)).toBeGreaterThanOrEqual(4.5)
+    expect(ratio('color-primary-strong', paper)).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('keeps status text readable on paper', () => {
+    for (const status of ['color-success', 'color-warning', 'color-danger']) {
+      expect(ratio(status, 'paper')).toBeGreaterThanOrEqual(4.5)
+    }
   })
 })

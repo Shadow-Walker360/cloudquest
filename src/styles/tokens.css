@@ -53,8 +53,18 @@
   --hero-end: #6e37d0;
   --color-hero-button-text: #5142c5;
 
+  /* Notebook paper and sticky notes. Text on them is always --color-text. */
+  --paper: #fffdf6;
+  --paper-line: #d5e3f4;
+  --paper-margin: #f0a3a3;
+  --sticky-yellow: #fff1a6;
+  --sticky-pink: #ffd5e0;
+  --sticky-blue: #cfe6ff;
+  --sticky-green: #d3f3d6;
+
   /* Typography */
   --font-sans: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-hand: 'Caveat Variable', 'Segoe Print', 'Bradley Hand', cursive;
   --text-xs: 0.75rem;
   --text-sm: 0.8125rem;
   --text-base: 0.9375rem;

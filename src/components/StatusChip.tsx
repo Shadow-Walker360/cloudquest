@@ -2,6 +2,7 @@ const CHIPS = {
   available: { icon: '✓', label: 'Available' },
   'in-development': { icon: '◐', label: 'In development' },
   planned: { icon: '○', label: 'Planned' },
+  attention: { icon: '!', label: 'Needs attention' },
 } as const
 
 export type ChipStatus = keyof typeof CHIPS

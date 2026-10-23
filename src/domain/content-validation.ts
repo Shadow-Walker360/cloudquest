@@ -240,6 +240,18 @@ export function validatePack(pack: ContentPack): ValidationIssue[] {
   })
 
   pack.scenarios.forEach((scenario, i) => {
+    for (const tag of scenario.misconceptionTags) {
+      if (!pack.misconceptionLabels?.[tag]?.trim()) {
+        add(
+          `scenarios[${i}].misconceptionTags`,
+          'invalid-misconception',
+          `Tag "${tag}" has no label in misconceptionLabels.`,
+        )
+      }
+    }
+  })
+
+  pack.scenarios.forEach((scenario, i) => {
     if (scenario.transferScenarioId === undefined) return
     const path = `scenarios[${i}].transferScenarioId`
     const target = pack.scenarios.find((candidate) => candidate.id === scenario.transferScenarioId)

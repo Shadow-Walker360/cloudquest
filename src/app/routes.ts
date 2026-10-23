@@ -8,6 +8,8 @@ export type Route =
   | { name: 'overview' }
   | { name: 'tracks' }
   | { name: 'lab' }
+  | { name: 'revision' }
+  | { name: 'profile' }
   | { name: 'scenario'; scenarioId: string }
   | { name: 'not-found' }
 
@@ -25,6 +27,10 @@ export function parseHash(hash: string): Route {
       return { name: 'tracks' }
     case '/app/lab':
       return { name: 'lab' }
+    case '/app/revision':
+      return { name: 'revision' }
+    case '/app/profile':
+      return { name: 'profile' }
   }
   const scenarioId = SCENARIO_PATH.exec(path)?.[1]
   return scenarioId ? { name: 'scenario', scenarioId } : { name: 'not-found' }
@@ -40,6 +46,10 @@ export function hrefFor(route: Exclude<Route, { name: 'not-found' }>): string {
       return '#/app/tracks'
     case 'lab':
       return '#/app/lab'
+    case 'revision':
+      return '#/app/revision'
+    case 'profile':
+      return '#/app/profile'
     case 'scenario':
       return `#/app/lab/${route.scenarioId}`
   }
@@ -61,6 +71,10 @@ export function routeTitle(route: Route): string {
     case 'lab':
     case 'scenario':
       return 'Scenario Lab · CloudQuest'
+    case 'revision':
+      return 'Revision Studio · CloudQuest'
+    case 'profile':
+      return 'My notebook · CloudQuest'
     case 'not-found':
       return 'Page not found · CloudQuest'
   }

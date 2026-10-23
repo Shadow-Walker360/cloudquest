@@ -9,7 +9,7 @@ export interface FeatureItem {
   description: string
   status: ChipStatus
   /** Present only for features that have a page today. */
-  route?: 'overview' | 'tracks' | 'lab'
+  route?: 'overview' | 'tracks' | 'lab' | 'revision' | 'profile'
 }
 
 /** A feature's nav entry is current on its own page and on pages that live under it. */
@@ -63,14 +63,17 @@ export const features: readonly FeatureItem[] = [
     id: 'revision',
     icon: 'revision',
     label: 'Revision Studio',
-    description: 'Revisit concepts you missed on a transparent schedule.',
-    status: 'planned',
+    description:
+      'Revisit missed concepts and your own sticky-note cards on a transparent schedule.',
+    status: 'available',
+    route: 'revision',
   },
   {
-    id: 'progress',
-    icon: 'progress',
-    label: 'Progress',
-    description: 'Objective-level evidence of what you have and have not practised.',
-    status: 'planned',
+    id: 'notebook',
+    icon: 'notebook',
+    label: 'My notebook',
+    description: 'Your profile and a progress board built only from your real attempts.',
+    status: 'available',
+    route: 'profile',
   },
 ]
